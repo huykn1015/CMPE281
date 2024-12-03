@@ -6,7 +6,7 @@ app = Flask(__name__)
 carla_manager = CarlaManager()  # Instantiate CarlaManager
 
 
-@app.route('/create_vehicle', methods=['POST'])
+@app.route('/api/sim/create_vehicle', methods=['POST'])
 def create_vehicle():
     data = request.json
     vehicle_id = data.get('vehicle_id')
@@ -21,7 +21,7 @@ def create_vehicle():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/set_path', methods=['POST'])
+@app.route('/api/sim/set_path', methods=['POST'])
 def set_path():
     data = request.json
     vehicle_id = data.get('vehicle_id')
@@ -39,7 +39,7 @@ def set_path():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/get_vehicle_location/<vehicle_id>', methods=['GET'])
+@app.route('/api/sim/get_vehicle_location/<vehicle_id>', methods=['GET'])
 def get_vehicle_location(vehicle_id):
     try:
         location = carla_manager.get_vehicle_location(vehicle_id)
@@ -50,7 +50,7 @@ def get_vehicle_location(vehicle_id):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/get_all_locations', methods=['GET'])
+@app.route('/api/sim/get_all_locations', methods=['GET'])
 def get_all_locations():
     try:
         locations = carla_manager.get_all_locations()
@@ -59,7 +59,7 @@ def get_all_locations():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/destroy_vehicle', methods=['POST'])
+@app.route('/api/sim/destroy_vehicle', methods=['POST'])
 def destroy_vehicle():
     data = request.json
     vehicle_id = data.get('vehicle_id')
@@ -68,7 +68,7 @@ def destroy_vehicle():
         return jsonify({"error": "vehicle_id is required"}), 400
 
     try:
-        carla_manager.destroy_vehicle(vehicle_id)
+        carla_manager.destroy_truck(vehicle_id)
         return jsonify({"vehicle_id": vehicle_id, "message": "Vehicle destroyed successfully"}), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
@@ -76,7 +76,7 @@ def destroy_vehicle():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/destroy_all_vehicles', methods=['POST'])
+@app.route('/api/sim/destroy_all_vehicles', methods=['POST'])
 def destroy_all_vehicles():
     try:
         carla_manager.destroy_all_vehicles()
