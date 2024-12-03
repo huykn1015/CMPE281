@@ -5,12 +5,8 @@ import math
 
 
 class PathManager:
-    stops_table_name = 'Stops'
-    stops_table_key = 'schedule_id'
-    stops_field_name = 'stops'
-
-    schedule_table_name = 'Locations'
-    schedule_table_key = 'stop_name'
+    stops_table_name = 'Locations'
+    stops_table_key = 'stop_name'
     location_field_name = 'location_id'
 
     location_table_name = "Coordinates"
@@ -18,7 +14,7 @@ class PathManager:
     coordinate_field_name = 'coordinates'
 
     path_table_name = 'Paths'
-    path_table_key = stops_table_key
+    path_table_key = 'schedule_id'
     path_field_name = 'paths'
 
     def __init__(self,
@@ -29,14 +25,35 @@ class PathManager:
         # Initialize the DynamoDB resource with region_name specified
         self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
         # self.stops_table = self.dynamodb.Table(self.stops_table_name)
-        self.schedule_table = self.dynamodb.Table(self.schedule_table_name)
+        self.stops_table = self.dynamodb.Table(self.stops_table_name)
         self.location_table = self.dynamodb.Table(self.location_table_name)
         self.path_table = self.dynamodb.Table(self.path_table_name)
 
     def get_location_id(self, stop_name):
         # Retrieve location_id from schedule_id
-        response = self.schedule_table.get_item(Key={self.schedule_table_key: stop_name})
+        response = self.stops_table.get_item(Key={self.stops_table_key: stop_name})
         return response['Item'][self.location_field_name] if 'Item' in response else None
+
+    def register_stops(self, stop_name, location_id):
+        try:
+            # Check if the location already exists
+            response = self.location_table.get_item(Key={self.stops_table_key: stop_name})
+
+            if 'Item' in response:
+                # If the location already exists, raise an exception
+                raise ValueError(f"Stop {stop_name} already exists. Cannot register new points.")
+
+            # If the location doesn't exist, create a new entry with xyz_points as a list of tuples
+            self.location_table.put_item(
+                Item={
+                    self.stops_table_key: stop_name,
+                    self.location_field_name: location_id  # Store the tuple as part of a list directly
+                }
+            )
+            print(f"Stop {stop_name} created with id {location_id}")
+
+        except Exception as e:
+            print(f"Error registering location: {e}")
 
     def register_location(self, location_id, coords):
         x, y, z = coords

@@ -172,8 +172,12 @@ def get_all_locations_endpoint():
     try:
         # Call the get_all_locations function
         locations = path_manager.get_all_locations()
-
-        return jsonify(locations), 200
+        res = []
+        for location in locations:
+            location_id = locations['location_id']
+            coords = locations['coordinates']
+            res.append((location_id, coords))
+        return jsonify(res), 200
 
     except Exception as e:
         return jsonify({'error': 'Internal server error'}), 500
