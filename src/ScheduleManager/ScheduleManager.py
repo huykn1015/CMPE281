@@ -14,11 +14,7 @@ class ScheduleManager:
                  region_name='us-west-2',
                  table_name='Schedules'):
         # Initialize the DynamoDB resource with region_name specified
-        self.dynamodb = boto3.resource('dynamodb',
-                                       endpoint_url=dynamodb_endpoint,
-                                       region_name=region_name,  # or any other region
-                                       aws_access_key_id=key_id,
-                                       aws_secret_access_key=key)
+        self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
         self.table = self.dynamodb.Table(table_name)
 
     def create_schedule(self, key: str, data: list):

@@ -11,8 +11,8 @@ from AlertManager.AlertManager import AlertManager
 
 app = Flask(__name__)
 CORS(app)
-key_id = 'jve9vw'
-key = 'fx211'
+key_id = ''
+key = ''
 schedule_manager = ScheduleManager(key_id, key)
 path_manager = PathManager(key_id, key)
 alert_manager = AlertManager(key_id, key)
@@ -162,4 +162,4 @@ def resolve_alert(alert_id):
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

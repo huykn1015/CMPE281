@@ -25,11 +25,7 @@ class PathManager:
                  dynamodb_endpoint='http://localhost:8000',
                  region_name='us-west-2'):
         # Initialize the DynamoDB resource with region_name specified
-        self.dynamodb = boto3.resource('dynamodb',
-                                       endpoint_url=dynamodb_endpoint,
-                                       region_name=region_name,  # or any other region
-                                       aws_access_key_id=key_id,
-                                       aws_secret_access_key=key)
+        self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
         # self.stops_table = self.dynamodb.Table(self.stops_table_name)
         self.schedule_table = self.dynamodb.Table(self.schedule_table_name)
         self.location_table = self.dynamodb.Table(self.location_table_name)
