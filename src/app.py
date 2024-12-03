@@ -75,10 +75,6 @@ def create_schedule():
 
     return jsonify(response), 201  # 201 Created status
 
-
-@app.route('api/locations/<location_id>', methods=['POST'])
-
-
 @app.route('/api/schedule-manager/<schedule_id>/', methods=['POST'])
 def modify_schedule(schedule_id):
     # Parse JSON data from request
