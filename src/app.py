@@ -162,7 +162,7 @@ def register_location():
         # If the location doesn't exist, create a new entry with xyz_points as a list of tuples
 
         path_manager.register_location(location_id, coord)
-
+        return jsonify({'Success': 'Location Registered'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

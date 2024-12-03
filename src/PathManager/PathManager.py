@@ -40,7 +40,7 @@ class PathManager:
         x, y, z = coords
         try:
             # Check if the location already exists
-            response = self.location_table.get_item(Key={'location_id': location_id})
+            response = self.location_table.get_item(Key={self.location_table_key: location_id})
 
             if 'Item' in response:
                 # If the location already exists, raise an exception
