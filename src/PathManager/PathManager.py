@@ -36,6 +36,46 @@ class PathManager:
         response = self.schedule_table.get_item(Key={self.schedule_table_key: stop_name})
         return response['Item'][self.location_field_name] if 'Item' in response else None
 
+    def register_location(self, location_id, coords):
+        x, y, z = coords
+        try:
+            # Check if the location already exists
+            response = self.location_table.get_item(Key={'location_id': location_id})
+
+            if 'Item' in response:
+                # If the location already exists, raise an exception
+                raise ValueError(f"Location ID {location_id} already exists. Cannot register new points.")
+
+            # If the location doesn't exist, create a new entry with xyz_points as a list of tuples
+            self.location_table.put_item(
+                Item={
+                    self.location_table_key: location_id,
+                    self.location_field_name: [x, y, z]  # Store the tuple as part of a list directly
+                }
+            )
+            print(f"Location {location_id} created with point: {coords}")
+
+        except Exception as e:
+            print(f"Error registering location: {e}")
+
+    def get_all_locations(self):
+        try:
+            # Scan the DynamoDB table to get all items
+            response = self.location_table.scan()
+
+            # Retrieve and return the list of locations with their xyz points
+            locations = []
+            for item in response['Items']:
+                location_id = item[self.location_table_key]
+                xyz_points = item[self.location_field_name]  # Directly access the list of tuples stored in DynamoDB
+                locations.append((location_id, xyz_points))
+
+            return locations
+
+        except Exception as e:
+            print(f"Error retrieving all locations: {e}")
+            return []
+
     def get_coordinates(self, location_id):
         # Retrieve coordinates from location_id
         response = self.location_table.get_item(Key={self.location_table_key: location_id})

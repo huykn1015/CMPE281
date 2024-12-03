@@ -76,6 +76,9 @@ def create_schedule():
     return jsonify(response), 201  # 201 Created status
 
 
+@app.route('api/locations/<location_id>', methods=['POST'])
+
+
 @app.route('/api/schedule-manager/<schedule_id>/', methods=['POST'])
 def modify_schedule(schedule_id):
     # Parse JSON data from request
@@ -160,6 +163,39 @@ def resolve_alert(alert_id):
         return jsonify({"error": "Failed to resolve alert"}), 400
 
 
+@app.route('/locations', methods=['POST'])
+def register_location():
+    try:
+        # Parse incoming JSON data
+        data = request.get_json()
+
+        # Check if the data contains 'location_id' and 'xyz_point'
+        if 'location_id' not in data or 'xyz_point' not in data:
+            return jsonify({'error': 'Both location_id and xyz_point are required'}), 400
+
+        location_id = data['location_id']
+        coord = tuple(data['xyz_point'])  # Ensure xyz_point is a tuple
+
+        # Check if the location already exists
+
+        # If the location doesn't exist, create a new entry with xyz_points as a list of tuples
+
+        path_manager.register_location(location_id, coord)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/locations', methods=['GET'])
+def get_all_locations_endpoint():
+    try:
+        # Call the get_all_locations function
+        locations = path_manager.get_all_locations()
+
+        return jsonify(locations), 200
+
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
