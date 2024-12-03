@@ -86,7 +86,7 @@ class PathManager:
             locations = []
             for item in response['Items']:
                 location_id = item[self.location_table_key]
-                xyz_points = item[self.location_field_name]  # Directly access the list of tuples stored in DynamoDB
+                xyz_points = item[self.coordinate_field_name]  # Directly access the list of tuples stored in DynamoDB
                 locations.append((location_id, xyz_points))
 
             return locations
