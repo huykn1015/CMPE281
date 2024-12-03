@@ -30,15 +30,18 @@ class CarlaManager:
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
 
-    def create_vehicle(self, vehicle_id, path):
+    def create_vehicle(self, vehicle_id):
         if vehicle_id in self._vehicles:
             return self._vehicles[vehicle_id]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
-        vehicle.set_autopilot(True, self._traffic_manager.get_port())
-        self._traffic_manager.set_path(vehicle, self.create_locations(path))
         self._vehicles[vehicle_id] = vehicle
         return vehicle
+
+    def set_path(self, vehicle_id, path):
+        vehicle = self._vehicles[vehicle_id]
+        vehicle.set_autopilot(True, self._traffic_manager.get_port())
+        self._traffic_manager.set_path(vehicle, self.create_locations(path))
 
     def get_vehicle_location(self, vehicle_id):
         if vehicle_id not in self._vehicles:
@@ -61,6 +64,10 @@ class CarlaManager:
             loc = sp.location
             res.append((loc.x, loc.y, loc.z))
         return res
+
+    def destroy_truck(self, vehicle_id):
+        vehicle = self._vehicles.pop(vehicle_id)
+        vehicle.destroy()
 
     def destroy_all_vehicles(self):
         for vehicle in self._vehicles.values():

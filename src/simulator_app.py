@@ -1,76 +1,89 @@
 from flask import Flask, request, jsonify
 from CalraManager.CarlaManager import CarlaManager
 
-app = Flask(__name__)
 
-# Instantiate the CarlaManager
-carla_manager = CarlaManager()
+app = Flask(__name__)
+carla_manager = CarlaManager()  # Instantiate CarlaManager
 
 
 @app.route('/create_vehicle', methods=['POST'])
 def create_vehicle():
-    """
-    Create a vehicle with a specified ID and path.
-    """
-    data = request.get_json()
+    data = request.json
+    vehicle_id = data.get('vehicle_id')
+
+    if not vehicle_id:
+        return jsonify({"error": "vehicle_id is required"}), 400
+
+    try:
+        vehicle = carla_manager.create_vehicle(vehicle_id)
+        return jsonify({"vehicle_id": vehicle_id, "message": "Vehicle created successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/set_path', methods=['POST'])
+def set_path():
+    data = request.json
     vehicle_id = data.get('vehicle_id')
     path = data.get('path')
 
     if not vehicle_id or not path:
-        return jsonify({"error": "Both 'vehicle_id' and 'path' are required"}), 400
+        return jsonify({"error": "vehicle_id and path are required"}), 400
 
     try:
-        carla_manager.create_vehicle(vehicle_id, path)
-        return jsonify({"message": f"Vehicle '{vehicle_id}' created successfully!"}), 200
+        carla_manager.set_path(vehicle_id, path)
+        return jsonify({"vehicle_id": vehicle_id, "message": "Path set successfully"}), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 @app.route('/get_vehicle_location/<vehicle_id>', methods=['GET'])
 def get_vehicle_location(vehicle_id):
-    """
-    Retrieve the current location of a vehicle.
-    """
     try:
         location = carla_manager.get_vehicle_location(vehicle_id)
         if location is None:
-            return jsonify({"error": f"Vehicle '{vehicle_id}' not found"}), 404
-
-        return jsonify({
-            "vehicle_id": vehicle_id,
-            "location": {
-                "x": location[0],
-                "y": location[1],
-                "z": location[2]
-            }
-        }), 200
+            return jsonify({"error": "Vehicle not found"}), 404
+        return jsonify({"vehicle_id": vehicle_id, "location": location}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/get_all_spawn_points', methods=['GET'])
-def get_all_spawn_points():
-    """
-    Retrieve all spawn points in the simulator.
-    """
+@app.route('/get_all_locations', methods=['GET'])
+def get_all_locations():
     try:
-        spawn_points = carla_manager.get_all_locations()
-        return jsonify({"spawn_points": spawn_points}), 200
+        locations = carla_manager.get_all_locations()
+        return jsonify({"locations": locations}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/destroy_vehicle', methods=['POST'])
+def destroy_vehicle():
+    data = request.json
+    vehicle_id = data.get('vehicle_id')
+
+    if not vehicle_id:
+        return jsonify({"error": "vehicle_id is required"}), 400
+
+    try:
+        carla_manager.destroy_vehicle(vehicle_id)
+        return jsonify({"vehicle_id": vehicle_id, "message": "Vehicle destroyed successfully"}), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 @app.route('/destroy_all_vehicles', methods=['POST'])
 def destroy_all_vehicles():
-    """
-    Destroy all vehicles in the simulator.
-    """
     try:
         carla_manager.destroy_all_vehicles()
-        return jsonify({"message": "All vehicles destroyed successfully!"}), 200
+        return jsonify({"message": "All vehicles destroyed successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
