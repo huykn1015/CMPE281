@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Manager</title>
+    <script>
+        async function getSchedule() {
+            const scheduleId = document.getElementById("queryScheduleId").value;
+            const apiUrl = `http://127.0.0.1:8080/api/schedule-manager/${scheduleId}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Schedule not found');
+                }
+                const data = await response.json();
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById("output").innerText = error.message;
+            }
+        }
+
+        async function modifySchedule() {
+            const scheduleId = document.getElementById("scheduleId").value;
+            const modificationType = document.getElementById("modificationType").value;
+            const stops = document.getElementById("stopsInput").value.split(",").map(stop => stop.trim());  // Convert to lowercase here
+
+            const apiUrl = `http://127.0.0.1:8080/api/schedule-manager/${scheduleId}`;
+            const payload = {
+                mod_type: modificationType,
+                stops: stops
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById("output").innerText = error.message;
+            }
+        }
+
+        async function createSchedule() {
+            const stops = document.getElementById("createStopsInput").value.split(",").map(stop => stop.trim().toLowerCase());  // Convert to lowercase here
+
+            const apiUrl = `http://127.0.0.1:8080/api/schedule-manager`;
+            const payload = { stops };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById("output").innerText = error.message;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Schedule Manager</h1>
+
+    <!-- Box to Query for Paths -->
+    <h2>Query Schedule</h2>
+    <label for="queryScheduleId">Schedule ID (optional):</label>
+    <input type="text" id="queryScheduleId" placeholder="Enter Schedule ID">
+    <button onclick="getSchedule()">Get Schedule</button><br><br>
+
+    <!-- Box to Modify Schedule -->
+    <h2>Modify Schedule</h2>
+    <label for="scheduleId">Schedule ID:</label>
+    <input type="text" id="scheduleId" placeholder="Enter Schedule ID" required><br><br>
+
+    <label for="modificationType">Modification Type (add/remove):</label>
+    <input type="text" id="modificationType" placeholder="Enter add or remove" required><br><br>
+
+    <label for="stopsInput">Stops (comma-separated):</label>
+    <input type="text" id="stopsInput" placeholder="e.g., stop1, stop2" required><br><br>
+
+    <button onclick="modifySchedule()">Modify Schedule</button><br><br>
+
+    <!-- Box to Create Schedule -->
+    <h2>Create New Schedule</h2>
+    <label for="createStopsInput">Stops (comma-separated):</label>
+    <input type="text" id="createStopsInput" placeholder="e.g., stop1, stop2" required><br><br>
+
+    <button onclick="createSchedule()">Create Schedule</button><br><br>
+
+    <!-- Output Section -->
+    <h2>Output</h2>
+    <pre id="output"></pre>
+</body>
+</html>

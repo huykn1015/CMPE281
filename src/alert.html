@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+        .alert-table-container {
+            flex: 1;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Alert Management System</h1>
+    <div class="container">
+        <div class="alert-table-container">
+            <h2>Active Alerts</h2>
+            <table id="active-alerts-table">
+                <thead>
+                    <tr>
+                        <th>Alert ID</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="alert-table-container">
+            <h2>Resolved Alerts</h2>
+            <table id="resolved-alerts-table">
+                <thead>
+                    <tr>
+                        <th>Alert ID</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <h2>Create a New Alert</h2>
+        <input type="text" id="alert-description" placeholder="Description" required>
+        <button onclick="createAlert()">Create Alert</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Resolve an Alert</h2>
+        <input type="text" id="alert-id-to-resolve" placeholder="Alert ID" required>
+        <button onclick="resolveAlert()">Resolve Alert</button>
+    </div>
+
+    <script>
+        // Fetch and display active alerts
+        function fetchActiveAlerts() {
+            fetch('http://127.0.0.1:8080/api/alerts/active')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#active-alerts-table tbody');
+                    tableBody.innerHTML = '';
+                    data.forEach(alert => {
+                        const row = `<tr><td>${alert.alert_id}</td><td>${alert.Description}</td></tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching active alerts:', error);
+                });
+        }
+
+        // Fetch and display resolved alerts
+        function fetchResolvedAlerts() {
+            fetch('http://127.0.0.1:8080/api/alerts/resolved')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#resolved-alerts-table tbody');
+                    tableBody.innerHTML = '';
+                    data.forEach(alert => {
+                        const row = `<tr><td>${alert.alert_id}</td><td>${alert.Description}</td></tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching resolved alerts:', error);
+                });
+        }
+
+        // Create a new alert
+        function createAlert() {
+            const description = document.getElementById('alert-description').value;
+
+            if (!description) {
+                alert('Please provide a description to create an alert.');
+                return;
+            }
+
+            fetch('http://127.0.0.1:8080/api/alerts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Description: description })
+            })
+            .then(response => response.json())
+            .then(data => {
+                fetchActiveAlerts(); // Refresh the active alerts table
+                fetchResolvedAlerts();
+            })
+            .catch(error => {
+                console.error('Error creating alert:', error);
+            });
+        }
+
+        // Resolve an alert
+        function resolveAlert() {
+            const alertId = document.getElementById('alert-id-to-resolve').value;
+
+            if (!alertId) {
+                alert('Please provide an Alert ID to resolve.');
+                return;
+            }
+
+            fetch(`http://127.0.0.1:8080/api/alerts/${alertId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    fetchActiveAlerts(); // Refresh the active alerts table
+                    fetchResolvedAlerts(); // Refresh the resolved alerts table
+                })
+                .catch(error => {
+                    console.error('Error resolving alert:', error);
+                });
+        }
+
+        // Initial fetch of alerts on page load
+        fetchActiveAlerts();
+        fetchResolvedAlerts();
+    </script>
+</body>
+</html>
