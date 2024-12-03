@@ -11,7 +11,7 @@ class ScheduleManager:
                  key_id,
                  key,
                  dynamodb_endpoint='http://localhost:8000',
-                 region_name='us-west-2',
+                 region_name='us-east-2',
                  table_name='Schedules'):
         # Initialize the DynamoDB resource with region_name specified
         self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
