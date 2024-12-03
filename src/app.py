@@ -174,8 +174,8 @@ def get_all_locations_endpoint():
         locations = path_manager.get_all_locations()
         res = []
         for location in locations:
-            location_id = locations['location_id']
-            coords = locations['coordinates']
+            location_id = location['location_id']
+            coords = location['coordinates']
             res.append((location_id, coords))
         return jsonify(res), 200
 
