@@ -50,7 +50,7 @@ class PathManager:
             self.location_table.put_item(
                 Item={
                     self.location_table_key: location_id,
-                    self.location_field_name: [x, y, z]  # Store the tuple as part of a list directly
+                    self.coordinate_field_name: [x, y, z]  # Store the tuple as part of a list directly
                 }
             )
             print(f"Location {location_id} created with point: {coords}")
