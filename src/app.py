@@ -147,21 +147,6 @@ def create_alert():
         print(e)
         return jsonify({"error": "Failed to create alert"}), 400
 
-@app.route('/api/alerts/<alert_id>', methods=['DELETE'])
-def resolve_alert(alert_id):
-    try:
-        alert = alert_manager.resolve_alert(alert_id)
-        if not alert:
-            return jsonify({"error": "Alert ID not found"}), 400
-
-        return jsonify({
-            "alert_id": alert_id,
-            "status": "deleted"
-        }), 200
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "Failed to resolve alert"}), 400
-
 
 @app.route('/locations', methods=['POST'])
 def register_location():
