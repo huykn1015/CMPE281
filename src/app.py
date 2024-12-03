@@ -172,7 +172,7 @@ def get_all_locations_endpoint():
     try:
         # Call the get_all_locations function
         locations = path_manager.get_all_locations()
-        return jsonify(res), 200
+        return jsonify(locations), 200
 
     except Exception as e:
         return jsonify({'error': 'Internal server error'}), 500
