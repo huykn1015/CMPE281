@@ -21,7 +21,7 @@ alert_manager = AlertManager(key_id, key)
 def get_path(schedule_id):
     path = path_manager.get_path(schedule_id)
     if path is not None:
-        return path
+        return jsonify(path)
     stops = schedule_manager.get_schedule(schedule_id)
     if stops is None:
         raise BadRequest(f"Schedule {{{schedule_id}}} does not exist")
