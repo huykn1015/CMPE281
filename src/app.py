@@ -309,9 +309,9 @@ def validate_session_token():
     if not session_token:
         return jsonify({'error': 'Token is required'}), 400
 
-    is_valid = verifier.validate_session_token(session_token)
-    if is_valid:
-        return jsonify({'message': 'Token is valid'}), 200
+    permissions = verifier.validate_session_token(session_token)
+    if permissions:
+        return jsonify({'permission': permissions}), 200
     else:
         return jsonify({'error': 'Invalid or expired token'}), 401
 
@@ -332,6 +332,33 @@ def invalidate_session_token():
             return jsonify({'error': 'Failed to invalidate token'}), 500
     except Exception as e:
         return jsonify({'error': f'Failed to invalidate token: {str(e)}'}), 500
+
+
+@app.route('/api/verify/add_permissions', methods=['POST'])
+def add_permissions():
+    data = request.json
+    session_token = data.get('session_token')
+    username = data.get('username')
+    new_permissions = data.get('permissions')
+
+    # Check for missing fields
+    if not session_token or not username or not new_permissions:
+        return jsonify({'error': 'session_token, username, and permissions are required'}), 400
+
+    # Validate the permissions input
+    valid_permissions = {'R', 'W', 'A'}
+    if not set(new_permissions).issubset(valid_permissions):
+        return jsonify({'error': 'Invalid permissions. Only R, W, and A are allowed.'}), 400
+
+    # Attempt to add permissions
+    try:
+        result = verifier.add_user_permissions(session_token, username, new_permissions)
+        if result:
+            return jsonify({'message': 'Permissions updated successfully', 'updated_permissions': result}), 200
+        else:
+            return jsonify({'error': 'Failed to update permissions. Ensure session token is valid and has the required permissions.'}), 403
+    except Exception as e:
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 
 if __name__ == '__main__':

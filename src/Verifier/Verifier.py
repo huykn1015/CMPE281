@@ -11,7 +11,8 @@ class Verifier:
     user_field_name = 'password_hash'
 
     tokens_table_name = 'SessionTokens'
-    token_field_name = 'active_tokens'
+    token_key_name = 'active_tokens'
+    token_field_name = 'permissions'
 
     def __init__(self,
                  region_name='us-east-2'):
@@ -40,6 +41,23 @@ class Verifier:
             print(f"Failed to create {username}: {error}")
             return None
 
+    def add_user_permissions(self, session_token, username, new_permissions):
+        permissions = self.validate_session_token(session_token)
+        if 'A' in permissions:
+            try:
+                response = self.users_table.update_item(
+                    Key={self.user_key_name: username },
+                    UpdateExpression='SET permissions = :new_permissions',
+                    ExpressionAttributeValues={
+                        ':new_permissions': new_permissions
+                    },
+                    ReturnValues="UPDATED_NEW"
+                )
+            except (BotoCoreError, ClientError) as error:
+                print(f"Failed to create {username}: {error}")
+                return None
+        return None
+
     def get_session_token(self, username, password):
         response = self.users_table.get_item(Key={self.user_key_name: username})
         if 'Item' not in response:
@@ -55,29 +73,26 @@ class Verifier:
             return None
 
         session_token = str(uuid.uuid4())
-
+        permissions = response['Item'][self.token_field_name]
         self.sessions_table.put_item(
             Item={
-                self.token_field_name: session_token,
-                "Status": "Active"
+                self.token_key_name: session_token,
+                self.token_field_name: permissions
             }
         )
         return session_token
 
     def validate_session_token(self, session_token):
-        response = self.sessions_table.get_item(Key={self.token_field_name: session_token})
+        response = self.sessions_table.get_item(Key={self.token_key_name: session_token})
         if 'Item' not in response:
             print(f'Session {session_token} does not exist')
-            return False
+            return None
 
-        if response['Item']['Status'] != "Active":
-            return False
-
-        return True
+        return response['Item'][self.token_field_name]
 
     def invalidate_session_token(self, session_token):
         try:
-            self.sessions_table.delete_item(Key={self.token_field_name: session_token})
+            self.sessions_table.delete_item(Key={self.token_key_name: session_token})
             return True
         except Exception as e:
             print(f"Failed to delete session token: {e}")
