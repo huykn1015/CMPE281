@@ -19,8 +19,7 @@ path_manager = PathManager(key_id, key)
 alert_manager = AlertManager(key_id, key)
 verifier = Verifier()
 
-VERIFIER_ACTIVE = False
-
+VERIFIER_ACTIVE = True
 
 @app.route('/api/path-manager/<schedule_id>', methods=['GET'])
 def get_path(schedule_id):
@@ -28,9 +27,11 @@ def get_path(schedule_id):
     if VERIFIER_ACTIVE:
         data = request.json
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Write Access")
 
     path = path_manager.get_path(schedule_id)
     if path is not None:
@@ -52,9 +53,11 @@ def get_schedules(schedule_id=None):
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Write Access")
 
     if schedule_id:
         # If schedule_id is provided, return the corresponding schedule
@@ -73,9 +76,11 @@ def create_schedule():
     data = request.get_json()
     if VERIFIER_ACTIVE:
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'W' not in permissions:
+            raise BadRequest("No Write Access")
 
     # Validate input
     if not data or 'stops' not in data or not isinstance(data['stops'], list):
@@ -109,9 +114,11 @@ def modify_schedule(schedule_id):
 
     if VERIFIER_ACTIVE:
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'W' not in permissions:
+            raise BadRequest("No Write Access")
 
     warning_message = None
     new_stops = None
@@ -151,9 +158,11 @@ def get_active_alerts():
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Write Access")
 
     try:
         alerts = alert_manager.get_all_active_alerts()
@@ -167,9 +176,11 @@ def get_resolved_alerts():
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Write Access")
 
     try:
         alerts = alert_manager.get_all_resolved_alerts()
@@ -184,9 +195,11 @@ def create_alert():
         data = request.get_json()
         if VERIFIER_ACTIVE:
             session_token = data.get('token')
-            token_is_valid = verifier.validate_session_token(session_token)
-            if not token_is_valid:
+            permissions = verifier.validate_session_token(session_token)
+            if not permissions:
                 raise BadRequest("Invalid session token")
+            if 'W' not in permissions:
+                raise BadRequest("No Write Access")
         description = data.get('Description')
 
         if not description:
@@ -204,9 +217,11 @@ def resolve_alert(alert_id):
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'W' not in permissions:
+            raise BadRequest("No Write Access")
     try:
         alert = alert_manager.resolve_alert(alert_id)
         if not alert:
@@ -228,9 +243,11 @@ def register_location():
         data = request.get_json()
         if VERIFIER_ACTIVE:
             session_token = data.get('token')
-            token_is_valid = verifier.validate_session_token(session_token)
-            if not token_is_valid:
+            permissions = verifier.validate_session_token(session_token)
+            if not permissions:
                 raise BadRequest("Invalid session token")
+            if 'W' not in permissions:
+                raise BadRequest("No Write Access")
 
         # Check if the data contains 'location_id' and 'xyz_point'
         if 'location_id' not in data or 'xyz_point' not in data:
@@ -254,14 +271,15 @@ def get_all_locations_endpoint():
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
-        token_is_valid = verifier.validate_session_token(session_token)
-        if not token_is_valid:
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
             raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Read Access")
     try:
         # Call the get_all_locations function
         locations = path_manager.get_all_locations()
         return jsonify(locations), 200
-
     except Exception as e:
         return jsonify({'error': 'Internal server error'}), 500
 

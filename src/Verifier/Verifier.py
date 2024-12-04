@@ -44,8 +44,6 @@ class Verifier:
 
     def add_user_permissions(self, session_token, username, new_permissions):
         permissions = self.validate_session_token(session_token)
-        print(permissions)
-        print("BBB")
         if 'A' in permissions:
             try:
                 response = self.users_table.update_item(
@@ -56,8 +54,6 @@ class Verifier:
                     },
                     ReturnValues="UPDATED_NEW"
                 )
-                print("AAA")
-                print(response)
                 return response
             except Exception as error:
                 print(f"Failed to create {username}: {error}")
@@ -74,8 +70,6 @@ class Verifier:
         hashed_password = hashlib.sha256(password_bytes).hexdigest()
         expected_hash = response['Item'][self.user_field_name]
         if hashed_password != expected_hash:
-            print("Invalid Password")
-            print(hashed_password, expected_hash)
             return None
 
         session_token = str(uuid.uuid4())
@@ -93,8 +87,6 @@ class Verifier:
         if 'Item' not in response:
             print(f'Session {session_token} does not exist')
             return None
-        print("CCC")
-        print(response['Item'][self.token_field_name])
         return response['Item'][self.token_field_name]
 
     def invalidate_session_token(self, session_token):
