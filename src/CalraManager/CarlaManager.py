@@ -174,7 +174,7 @@ class CarlaManager:
 
         if int(vehicle_id) not in self._vehicles:
             return None
-        vehicle, _ = self._vehicles[vehicle_id]
+        vehicle = self._vehicles[vehicle_id]
         loc = vehicle.get_location()
         return loc.x, loc.y, loc.z
 
@@ -189,12 +189,22 @@ class CarlaManager:
         return self._vehicle_statuses[vehicle_id]
     
     def get_vehicle_telemetry(self, vehicle_id):
+        try:
+            vehicle_id = int(vehicle_id)
+        except:
+            print("'vehicle_id' incorrect type or missing.")
+
         if vehicle_id not in self._vehicles:
             return None
-        vehicle, _ = self._vehicles[vehicle_id]
+        vehicle = self._vehicles[vehicle_id]
+
         loc = vehicle.get_location()
-        speed = vehicle.get_velocity()
+
+        velocity = vehicle.get_velocity()
+        speed = (velocity.x**2 + velocity.y**2 + velocity.z**2)**0.5
+
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+
         return loc.x, loc.y, loc.z, speed, timestamp
 
     @staticmethod
@@ -214,10 +224,10 @@ class CarlaManager:
         return res
 
     def destroy_truck(self, vehicle_id):
-        vehicle, _ = self._vehicles.pop(vehicle_id)
+        vehicle = self._vehicles.pop(vehicle_id)
         vehicle.destroy()
 
     def destroy_all_vehicles(self):
-        for vehicle, _ in self._vehicles.values():
+        for vehicle in self._vehicles.values():
             vehicle.destroy()
         self._vehicles.clear()
