@@ -26,20 +26,6 @@ def get_db_connection():
     )
 
 
-@app.route('/test_db_connection', methods=['GET'])
-def test_db_connection():
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT 1")
-        result = cur.fetchone()
-        cur.close()
-        conn.close()
-        return jsonify({"message": "Database connection successful!", "result": result}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 @app.route('/api/trucks', methods=['GET'])
 def get_trucks():
     """Fetch all trucks from the database."""
