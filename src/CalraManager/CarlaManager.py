@@ -1,4 +1,11 @@
 import carla
+import sys
+
+# Add CARLA paths to Python path
+sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla')
+sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla/agents')
+
+
 from agents.navigation.behavior_agent import BehaviorAgent
 import random
 import time
