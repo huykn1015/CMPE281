@@ -45,7 +45,7 @@ def get_trucks():
     """Fetch all trucks from the database."""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, owner_id, status, maintenance_status, system_health FROM autonomous_truck")
+    cursor.execute("SELECT id, owner_id, status, maintenance_status, system_health FROM \"autonomous-truck\".autonomous_truck")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -90,7 +90,7 @@ def delete_truck_from_db():
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM autonomous_truck WHERE id = %s", (truck_id,))
+    cursor.execute("DELETE FROM \"autonomous-truck\".autonomous_truck WHERE id = %s", (truck_id,))
     conn.commit()
     cursor.close()
     conn.close()
@@ -103,7 +103,7 @@ def get_truck_by_id(truck_id):
     cursor = conn.cursor()
     cursor.execute("""
         SELECT id, owner_id, status, maintenance_status, system_health
-        FROM autonomous_truck
+        FROM \"autonomous-truck\"autonomous_truck
         WHERE id = %s
     """, (truck_id,))
     row = cursor.fetchone()
