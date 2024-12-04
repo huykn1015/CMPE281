@@ -9,7 +9,6 @@ sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla
 import random
 import time
 import os
-import cv2
 import numpy as np
 import threading
 import requests

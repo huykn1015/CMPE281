@@ -40,6 +40,21 @@ def set_path():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/sim/check_request_status', methods=['POST'])
+def set_path():
+    data = request.json
+    vehicle_id = data.get('vehicle_id')
+
+    if not vehicle_id:
+        return jsonify({"error": "vehicle_id is required"}), 400
+
+    try:
+        carla_manager.get_vehicle_status(vehicle_id)
+        return jsonify({"vehicle_id": vehicle_id, "message": "Path set successfully"}), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/sim/get_vehicle_location/<vehicle_id>', methods=['GET'])
 def get_vehicle_location(vehicle_id):
