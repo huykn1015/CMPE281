@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from CalraManager.CarlaManager import CarlaManager
 
 
 app = Flask(__name__)
+CORS(app)
 carla_manager = CarlaManager()  # Instantiate CarlaManager
 
 
