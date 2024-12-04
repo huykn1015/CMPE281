@@ -57,7 +57,7 @@ class Verifier:
                 )
                 print(response)
                 return response
-            except (BotoCoreError, ClientError) as error:
+            except Exception as error:
                 print(f"Failed to create {username}: {error}")
                 return None
         return None
