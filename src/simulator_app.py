@@ -49,8 +49,8 @@ def get_request_status():
         return jsonify({"error": "vehicle_id is required"}), 400
 
     try:
-        carla_manager.get_vehicle_status(vehicle_id)
-        return jsonify({"vehicle_id": vehicle_id, "message": "Path set successfully"}), 200
+        status = carla_manager.get_vehicle_status(vehicle_id)
+        return jsonify({status: status}), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
     except Exception as e:
