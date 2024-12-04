@@ -1,5 +1,5 @@
 import carla
-from carla.agents.navigation.behavior_agent import BehaviorAgent
+from agents.navigation.behavior_agent import BehaviorAgent
 import random
 import time
 import os
