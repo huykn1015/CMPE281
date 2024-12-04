@@ -76,6 +76,8 @@ class CarlaManager:
             if vehicle_id not in self._vehicles:
                 raise('Vehicle not created')
             self._vehicle_statuses[vehicle_id] = 'In Transit'
+            requests.post(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"})
+
             vehicle = self._vehicles[vehicle_id]
             current_location = vehicle.get_location()
             target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
