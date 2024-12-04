@@ -208,7 +208,7 @@ def create_alert():
         return jsonify(new_alert), 200
     except Exception as e:
         print(e)
-        return jsonify({"error": "Failed to create alert"}), 400
+        return jsonify({"error": "Failed to create alert: {e}"}), 400
 
 
 @app.route('/api/alerts/<alert_id>', methods=['DELETE'])
