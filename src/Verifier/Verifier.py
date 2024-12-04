@@ -32,7 +32,8 @@ class Verifier:
             self.users_table.put_item(
                 Item={
                     self.user_key_name: username,
-                    self.user_field_name: hashed_password
+                    self.user_field_name: hashed_password,
+                    self.token_field_name: 'R'
                 }
             )
             print(f"User {username} created successfully.")
@@ -53,6 +54,7 @@ class Verifier:
                     },
                     ReturnValues="UPDATED_NEW"
                 )
+                return response
             except (BotoCoreError, ClientError) as error:
                 print(f"Failed to create {username}: {error}")
                 return None
