@@ -51,6 +51,7 @@ class Verifier:
         expected_hash = response['Item'][self.user_field_name]
         if hashed_password != expected_hash:
             print("Invalid Password")
+            print(hashed_password, expected_hash)
             return None
 
         session_token = str(uuid.uuid4())
