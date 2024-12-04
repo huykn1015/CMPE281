@@ -353,11 +353,13 @@ def add_permissions():
     # Attempt to add permissions
     try:
         result = verifier.add_user_permissions(session_token, username, new_permissions)
+        print(result)
         if result:
             return jsonify({'message': 'Permissions updated successfully', 'updated_permissions': result}), 200
         else:
             return jsonify({'error': 'Failed to update permissions. Ensure session token is valid and has the required permissions.'}), 403
     except Exception as e:
+        print(e)
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 
