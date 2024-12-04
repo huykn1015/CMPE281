@@ -38,6 +38,20 @@ class CarlaManager:
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
 
+    def _tick_world(self):
+        """
+        Background thread to keep the world ticking.
+        """
+        while not self._stop_tick.is_set():
+            self._world.tick()
+            time.sleep(0.05)  # 20 FPS (adjust the sleep time if needed)
+
+    def stop_ticking(self):
+        """
+        Stop the background ticking thread.
+        """
+        self._stop_tick.set()
+        self._tick_thread.join()
 
     def create_vehicle(self, vehicle_id):
         if vehicle_id in self._vehicles:
