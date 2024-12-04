@@ -44,6 +44,7 @@ class Verifier:
 
     def add_user_permissions(self, session_token, username, new_permissions):
         permissions = self.validate_session_token(session_token)
+        print(permissions)
         if 'A' in permissions:
             try:
                 response = self.users_table.update_item(
@@ -54,6 +55,7 @@ class Verifier:
                     },
                     ReturnValues="UPDATED_NEW"
                 )
+                print(response)
                 return response
             except (BotoCoreError, ClientError) as error:
                 print(f"Failed to create {username}: {error}")
