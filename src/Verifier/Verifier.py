@@ -49,7 +49,7 @@ class Verifier:
             try:
                 response = self.users_table.update_item(
                     Key={self.user_key_name: username },
-                    UpdateExpression='SET permissions = :new_permissions',
+                    UpdateExpression='SET perms = :new_permissions',
                     ExpressionAttributeValues={
                         ':new_permissions': new_permissions
                     },
