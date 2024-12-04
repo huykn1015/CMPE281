@@ -45,16 +45,18 @@ class Verifier:
     def add_user_permissions(self, session_token, username, new_permissions):
         permissions = self.validate_session_token(session_token)
         print(permissions)
+        print("BBB")
         if 'A' in permissions:
             try:
                 response = self.users_table.update_item(
-                    Key={self.user_key_name: username },
+                    Key={self.user_key_name: username},
                     UpdateExpression='SET perms = :new_permissions',
                     ExpressionAttributeValues={
                         ':new_permissions': new_permissions
                     },
                     ReturnValues="UPDATED_NEW"
                 )
+                print("AAA")
                 print(response)
                 return response
             except Exception as error:
@@ -91,6 +93,7 @@ class Verifier:
         if 'Item' not in response:
             print(f'Session {session_token} does not exist')
             return None
+        print("CCC")
         print(response['Item'][self.token_field_name])
         return response['Item'][self.token_field_name]
 
