@@ -46,8 +46,8 @@ def get_path(schedule_id):
     return jsonify({"schedule_id": schedule_id, "path": path}, 200)
 
 
-@app.route('/api/schedule-manager/', methods=['GET'])
-@app.route('/api/schedule-manager/<schedule_id>', methods=['GET'])
+@app.route('/api/schedule-manager/', methods=['POST'])
+@app.route('/api/schedule-manager/<schedule_id>', methods=['POST'])
 def get_schedules(schedule_id=None):
 
     if VERIFIER_ACTIVE:
@@ -70,7 +70,7 @@ def get_schedules(schedule_id=None):
         return jsonify(list(schedule_manager.get_all_schedules()))
 
 
-@app.route('/api/schedule-manager', methods=['POST'])
+@app.route('/api/schedule-manager/create', methods=['POST'])
 def create_schedule():
     # Parse JSON data from request
     data = request.get_json()
@@ -153,7 +153,7 @@ def modify_schedule(schedule_id):
     return jsonify(response), 200  # 200 OK status
 
 
-@app.route('/api/alerts/active', methods=['GET'])
+@app.route('/api/alerts/active', methods=['POST'])
 def get_active_alerts():
     if VERIFIER_ACTIVE:
         data = request.get_json()
@@ -171,7 +171,7 @@ def get_active_alerts():
         return jsonify({"error": "Alert service is down"}), 400
 
 
-@app.route('/api/alerts/resolved', methods=['GET'])
+@app.route('/api/alerts/resolved', methods=['POST'])
 def get_resolved_alerts():
     if VERIFIER_ACTIVE:
         data = request.get_json()
@@ -189,7 +189,7 @@ def get_resolved_alerts():
         return jsonify({"error": "Alert service is down"}), 400
 
 
-@app.route('/api/alerts', methods=['POST'])
+@app.route('/api/alerts/create', methods=['POST'])
 def create_alert():
     try:
         data = request.get_json()
@@ -266,7 +266,7 @@ def register_location():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/locations', methods=['GET'])
+@app.route('/locations', methods=['POST'])
 def get_all_locations_endpoint():
     if VERIFIER_ACTIVE:
         data = request.get_json()
