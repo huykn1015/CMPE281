@@ -46,14 +46,16 @@ class CarlaManager:
     def get_vehicle_location(self, vehicle_id):
         if vehicle_id not in self._vehicles:
             return None
-        loc = self._vehicles[vehicle_id].get_location()
+        vehicle = self._vehicles[vehicle_id]
+        loc = vehicle.get_location()
         return loc.x, loc.y, loc.z
     
     def get_vehicle_telemetry(self, vehicle_id):
         if vehicle_id not in self._vehicles:
             return None
-        loc = self._vehicles[vehicle_id].get_location()
-        speed = self._vehicles[vehicle_id].get_velocity()
+        vehicle = self._vehicles[vehicle_id]
+        loc = vehicle.get_location()
+        speed = vehicle.get_velocity()
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
         return loc.x, loc.y, loc.z, speed, timestamp
 
