@@ -359,7 +359,6 @@ def add_permissions():
         else:
             return jsonify({'error': 'Failed to update permissions. Ensure session token is valid and has the required permissions.'}), 403
     except Exception as e:
-        print(e)
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 

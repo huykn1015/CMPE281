@@ -91,7 +91,7 @@ class Verifier:
         if 'Item' not in response:
             print(f'Session {session_token} does not exist')
             return None
-
+        print(response['Item'][self.token_field_name])
         return response['Item'][self.token_field_name]
 
     def invalidate_session_token(self, session_token):
