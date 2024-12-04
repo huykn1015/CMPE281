@@ -65,6 +65,8 @@ class CarlaManager:
             return self._vehicles[vehicle_id]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
+        console.log("Vehicle spawned:", vehicle)
+        console.log("Location:", vehicle.get_location())
         self._vehicles[vehicle_id] = vehicle
         self._vehicle_statuses[vehicle_id] = 'Spawned'
         return vehicle
@@ -166,8 +168,11 @@ class CarlaManager:
 
     def get_vehicle_location(self, vehicle_id):
         if vehicle_id not in self._vehicles:
+            console.log("Vehicle ID was not found.")
             return None
         vehicle = self._vehicles[vehicle_id]
+        console.log("Vehicle:", vehicle)
+        console.log("Location:" vehicle.get_location())
         loc = vehicle.get_location()
         return loc.x, loc.y, loc.z
 
