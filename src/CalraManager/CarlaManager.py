@@ -6,13 +6,13 @@ sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla
 sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla/agents')
 
 
-from agents.navigation.behavior_agent import BehaviorAgent
 import random
 import time
 import os
 import cv2
 import numpy as np
 import threading
+import requests
 
 
 class CarlaManager:
@@ -32,7 +32,7 @@ class CarlaManager:
         self._tick_thread.start()
         # Get the blueprint library
         blueprint_library = self._world.get_blueprint_library()
-
+        self._vehicle_statuses = {}
         # Choose a random vehicle blueprint
         self._vehicle_bp = random.choice(blueprint_library.filter('vehicle.*'))
 
@@ -65,14 +65,53 @@ class CarlaManager:
             return self._vehicles[vehicle_id]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
-        agent = BehaviorAgent(vehicle)
-        self._vehicles[vehicle_id] = (vehicle, agent)
+        self._vehicles[vehicle_id] = vehicle
+        self._vehicle_statuses[vehicle_id] = 'Spawned'
         return vehicle
 
     def set_path(self, vehicle_id, path):
-        vehicle, agent = self._vehicles[vehicle_id]
-        locations = self.create_locations(path)
-        self.navigate_vehicle_with_agent(vehicle, agent, locations)
+        def move():
+            if vehicle_id not in self._vehicles:
+                raise('Vehicle not created')
+            self._vehicle_statuses[vehicle_id] = 'In Transit'
+            vehicle = self._vehicles[vehicle_id]
+            current_location = vehicle.get_location()
+            target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
+            direction = target_location - current_location
+            direction_length = direction.length()
+            direction = carla.Vector3D(
+                direction.x / direction_length,
+                direction.y / direction_length,
+                direction.z / direction_length
+            )
+            while direction_length > 1.0:  # Stop when close to the target
+                # Update the vehicle's current location
+                current_location = vehicle.get_location()
+                direction = target_location - current_location
+                direction_length = direction.length()
+
+                # Normalize the direction vector again
+                direction = carla.Vector3D(
+                    direction.x / direction_length,
+                    direction.y / direction_length,
+                    direction.z / direction_length
+                )
+
+                # Control the vehicle
+                control = carla.VehicleControl()
+                control.throttle = 0.5  # Adjust throttle as needed
+                control.steer = 0.0  # Adjust steering based on direction if needed
+                vehicle.apply_control(control)
+
+                # Tick the world to advance the simulation
+                self._world.tick()
+                time.sleep(0.05)
+            control = carla.VehicleControl(throttle=0.0, brake=1.0)
+            vehicle.apply_control(control)
+            self._vehicle_statuses[vehicle_id] = 'Delivered'
+        move_thread = threading.Thread(target=move, daemon=True)
+        move_thread.start()
+        
 
     def navigate_vehicle_with_agent(self, vehicle, agent, destinations):
         """
@@ -129,6 +168,11 @@ class CarlaManager:
             return None
         loc = self._vehicles[vehicle_id].get_location()
         return loc.x, loc.y, loc.z
+
+    def get_vehicle_status(self, vehicle_id):
+        if vehicle_id not in self._vehicles:
+            return None
+        return self._vehicle_statuses[vehicle_id]
     
     def get_vehicle_telemetry(self, vehicle_id):
         if vehicle_id not in self._vehicles:
