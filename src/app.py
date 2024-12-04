@@ -235,7 +235,7 @@ def resolve_alert(alert_id):
         return jsonify({"error": "Failed to resolve alert"}), 400
 
 
-@app.route('/locations', methods=['POST'])
+@app.route('/locations/register', methods=['POST'])
 def register_location():
     try:
         # Parse incoming JSON data
@@ -265,7 +265,7 @@ def register_location():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/locations', methods=['POST'])
+@app.route('/locations/all', methods=['POST'])
 def get_all_locations_endpoint():
     if VERIFIER_ACTIVE:
         data = request.get_json()
