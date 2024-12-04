@@ -62,7 +62,7 @@ def add_truck_to_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO autonomous_truck (id, owner_id, status, maintenance_status, system_health)
+        INSERT INTO "autonomous-truck".autonomous_truck (id, owner_id, status, maintenance_status, system_health)
         VALUES (%s, %s, %s, %s, %s)
     """, (truck_id, owner_id, status, maintenance_status, system_health))
     conn.commit()
@@ -71,9 +71,8 @@ def add_truck_to_db():
     return jsonify({"message": "Truck added successfully"}), 201
 
 @app.route('/api/trucks/<int:truck_id>', methods=['DELETE'])
-def delete_truck_from_db():
+def delete_truck_from_db(truck_id):
     """Delete a truck from the database."""
-    truck_id = request.view_args['truck_id']
 
     conn = get_db_connection()
     cursor = conn.cursor()
