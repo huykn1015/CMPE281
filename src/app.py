@@ -34,7 +34,7 @@ def get_path(schedule_id):
 
     path = path_manager.get_path(schedule_id)
     if path is not None:
-        return jsonify({"schedule_id": schedule_id, "path": path}, 200)
+        return jsonify(path)
     stops = schedule_manager.get_schedule(schedule_id)
     if stops is None:
         raise BadRequest(f"Schedule {{{schedule_id}}} does not exist")

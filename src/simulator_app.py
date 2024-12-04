@@ -48,6 +48,17 @@ def get_vehicle_location(vehicle_id):
         return jsonify({"vehicle_id": vehicle_id, "location": location}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+@app.route('/api/sim/get_vehicle_telemetry/<vehicle_id>', methods=['GET'])
+def get_vehicle_telemetry(vehicle_id):
+    try:
+        data = carla_manager.get_vehicle_telemetry(vehicle_id)
+        if data is None:
+            return jsonify({"error": "Vehicle not found"}), 404
+        return jsonify({"vehicle_id": vehicle_id, "data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/sim/get_all_locations', methods=['GET'])
@@ -83,6 +94,7 @@ def destroy_all_vehicles():
         return jsonify({"message": "All vehicles destroyed successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
 
 if __name__ == '__main__':
