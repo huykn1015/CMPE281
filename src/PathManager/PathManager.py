@@ -114,7 +114,7 @@ class PathManager:
                 coord = self.get_coordinates(location_id)
                 if coord:
                     coords.append((stop, coord))
-
+        print(coords)
         # Start the path with the first coordinate
         if not coords:
             return []
