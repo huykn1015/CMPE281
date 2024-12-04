@@ -20,6 +20,9 @@ class CarlaManager:
         settings.synchronous_mode = True
         settings.fixed_delta_seconds = 0.05  # 20 ticks per second
         self._world.apply_settings(settings)
+        self._tick_thread = threading.Thread(target=self._tick_world, daemon=True)
+        self._stop_tick = threading.Event()
+        self._tick_thread.start()
         # Get the blueprint library
         blueprint_library = self._world.get_blueprint_library()
 
@@ -34,6 +37,7 @@ class CarlaManager:
             exit(1)
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
+
 
     def create_vehicle(self, vehicle_id):
         if vehicle_id in self._vehicles:
