@@ -103,7 +103,7 @@ def get_truck_by_id(truck_id):
     cursor = conn.cursor()
     cursor.execute("""
         SELECT id, owner_id, status, maintenance_status, system_health
-        FROM \"autonomous-truck\"autonomous_truck
+        FROM \"autonomous-truck\".autonomous_truck
         WHERE id = %s
     """, (truck_id,))
     row = cursor.fetchone()
