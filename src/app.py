@@ -21,7 +21,7 @@ verifier = Verifier()
 
 VERIFIER_ACTIVE = True
 
-@app.route('/api/path-manager/<schedule_id>', methods=['GET'])
+@app.route('/api/path-manager/<schedule_id>', methods=['POST'])
 def get_path(schedule_id):
 
     if VERIFIER_ACTIVE:
@@ -191,17 +191,16 @@ def get_resolved_alerts():
 
 @app.route('/api/alerts/create', methods=['POST'])
 def create_alert():
+    data = request.get_json()
+    if VERIFIER_ACTIVE:
+        session_token = data.get('token')
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
+            raise BadRequest("Invalid session token")
+        if 'W' not in permissions:
+            raise BadRequest("No Write Access")
+    description = data.get('Description')
     try:
-        data = request.get_json()
-        if VERIFIER_ACTIVE:
-            session_token = data.get('token')
-            permissions = verifier.validate_session_token(session_token)
-            if not permissions:
-                raise BadRequest("Invalid session token")
-            if 'W' not in permissions:
-                raise BadRequest("No Write Access")
-        description = data.get('Description')
-
         if not description:
             return jsonify({"error": "Description is required"}), 400
 
@@ -236,7 +235,7 @@ def resolve_alert(alert_id):
         return jsonify({"error": "Failed to resolve alert"}), 400
 
 
-@app.route('/locations', methods=['POST'])
+@app.route('/api/locations/register', methods=['POST'])
 def register_location():
     try:
         # Parse incoming JSON data
@@ -266,7 +265,7 @@ def register_location():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/locations', methods=['POST'])
+@app.route('/api/locations/all', methods=['POST'])
 def get_all_locations_endpoint():
     if VERIFIER_ACTIVE:
         data = request.get_json()
