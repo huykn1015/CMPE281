@@ -165,13 +165,23 @@ class CarlaManager:
 
 
     def get_vehicle_location(self, vehicle_id):
-        if vehicle_id not in self._vehicles:
+        try:
+            vehicle_id = int(vehicle_id)
+        except:
+            print("'vehicle_id' incorrect type or missing.")
+
+        if int(vehicle_id) not in self._vehicles:
             return None
         vehicle, _ = self._vehicles[vehicle_id]
         loc = vehicle.get_location()
         return loc.x, loc.y, loc.z
 
     def get_vehicle_status(self, vehicle_id):
+        try:
+            vehicle_id = int(vehicle_id)
+        except:
+            print("'vehicle_id' incorrect type or missing.")
+
         if vehicle_id not in self._vehicles:
             return None
         return self._vehicle_statuses[vehicle_id]
