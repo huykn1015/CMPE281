@@ -12,7 +12,7 @@ class Verifier:
 
     tokens_table_name = 'SessionTokens'
     token_key_name = 'active_tokens'
-    token_field_name = 'perm'
+    token_field_name = 'perms'
 
     def __init__(self,
                  region_name='us-east-2'):
