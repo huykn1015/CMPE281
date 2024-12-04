@@ -41,7 +41,7 @@ def set_path():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/sim/check_request_status', methods=['POST'])
-def set_path():
+def get_request_status():
     data = request.json
     vehicle_id = data.get('vehicle_id')
 
