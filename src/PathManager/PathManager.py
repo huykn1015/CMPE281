@@ -80,14 +80,14 @@ class PathManager:
     def get_all_locations(self):
         try:
             # Scan the DynamoDB table to get all items
-            response = self.location_table.scan()
+            response = self.stops_table.scan()
 
             # Retrieve and return the list of locations with their xyz points
             locations = []
             for item in response['Items']:
-                location_id = item[self.location_table_key]
-                xyz_points = item[self.coordinate_field_name]  # Directly access the list of tuples stored in DynamoDB
-                locations.append((location_id, xyz_points))
+                stop_name = item[self.stops_table_key]
+                location_id = item[self.location_field_name]  # Directly access the list of tuples stored in DynamoDB
+                locations.append((stop_name, location_id))
 
             return locations
 
