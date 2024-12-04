@@ -50,7 +50,7 @@ def get_request_status():
 
     try:
         status = carla_manager.get_vehicle_status(vehicle_id)
-        return jsonify({status: status}), 200
+        return jsonify({"status": status}), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
     except Exception as e:

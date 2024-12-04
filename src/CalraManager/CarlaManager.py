@@ -101,13 +101,13 @@ class CarlaManager:
 
                 # Control the vehicle
                 control = carla.VehicleControl()
-                control.throttle = 0.5  # Adjust throttle as needed
+                control.throttle = 2  # Adjust throttle as needed
                 control.steer = 0.0  # Adjust steering based on direction if needed
                 vehicle.apply_control(control)
 
                 # Tick the world to advance the simulation
                 self._world.tick()
-                time.sleep(0.05)
+                time.sleep(0.005)
             control = carla.VehicleControl(throttle=0.0, brake=1.0)
             vehicle.apply_control(control)
             self._vehicle_statuses[vehicle_id] = 'Delivered'
