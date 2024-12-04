@@ -62,6 +62,7 @@ class Verifier:
                 "Status": "Active"
             }
         )
+        return session_token
 
     def validate_session_token(self, session_token):
         response = self.sessions_table.get_item(Key={self.token_field_name: session_token})
