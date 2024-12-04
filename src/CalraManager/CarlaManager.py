@@ -12,6 +12,7 @@ import os
 import numpy as np
 import threading
 import requests
+import math
 
 
 class CarlaManager:
@@ -77,7 +78,7 @@ class CarlaManager:
             current_location = vehicle.get_location()
             target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
             direction = target_location - current_location
-            direction_length = direction.length()
+            direction_length = self.vector_length(direction)
             direction = carla.Vector3D(
                 direction.x / direction_length,
                 direction.y / direction_length,
@@ -87,7 +88,7 @@ class CarlaManager:
                 # Update the vehicle's current location
                 current_location = vehicle.get_location()
                 direction = target_location - current_location
-                direction_length = direction.length()
+                direction_length = self.vector_length(direction)
 
                 # Normalize the direction vector again
                 direction = carla.Vector3D(
@@ -111,7 +112,8 @@ class CarlaManager:
         move_thread = threading.Thread(target=move, daemon=True)
         move_thread.start()
         
-
+    def vector_length(vector):
+        return math.sqrt(vector.x**2 + vector.y**2 + vector.z**2)
     def navigate_vehicle_with_agent(self, vehicle, agent, destinations):
         """
         Automates vehicle navigation using a BehaviorAgent in a threaded and synchronous manner.
