@@ -61,16 +61,23 @@ class CarlaManager:
         self._stop_tick.set()
         self._tick_thread.join()
 
-    def set_birds_eye_view(self):
+    def set_birds_eye_view(self, vehicle_id):
         """
         Set the spectator camera to a bird's-eye (top-down) view of the map.
         """
         spectator = self._world.get_spectator()
+        vehicle = self._vehicles[vehicle_id]
         
-        # Set the camera position above the map and adjust the rotation to look straight down
+        vehicle_transform = vehicle.get_transform()
+
+        # Set the spectator camera to follow the vehicle from a bird's-eye perspective
         transform = carla.Transform(
-            carla.Location(x=0, y=0, z=100),  # Height above the map (adjust as necessary)
-            carla.Rotation(pitch=-90, yaw=0, roll=0)  # Look straight down (pitch=-90 degrees)
+            carla.Location(
+                x=vehicle_transform.location.x,
+                y=vehicle_transform.location.y,
+                z=10  # Adjust height as necessary
+            ),
+            carla.Rotation(pitch=-90, yaw=vehicle_transform.rotation.yaw, roll=0)
         )
 
         spectator.set_transform(transform)
@@ -92,8 +99,8 @@ class CarlaManager:
             if vehicle_id not in self._vehicles:
                 raise('Vehicle not created')
             self._vehicle_statuses[vehicle_id] = 'In Transit'
-
-            requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"}, headers={"Content-Type": "application/json"})
+            self.set_birds_eye_view(vehicle_id)
+            # requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"}, headers={"Content-Type": "application/json"})
             vehicle = self._vehicles[vehicle_id]
             current_location = vehicle.get_location()
             target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
