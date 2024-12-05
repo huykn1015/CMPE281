@@ -74,7 +74,7 @@ class CarlaManager:
             carla.Location(
                 x=vehicle_transform.location.x,
                 y=vehicle_transform.location.y,
-                z=100  # Adjust height as necessary
+                z=10  # Adjust height as necessary
             ),
             carla.Rotation(pitch=-90, yaw=vehicle_transform.rotation.yaw, roll=0)
         )
@@ -98,7 +98,6 @@ class CarlaManager:
             if vehicle_id not in self._vehicles:
                 raise('Vehicle not created')
             self._vehicle_statuses[vehicle_id] = 'In Transit'
-            self.set_birds_eye_view(vehicle_id)
             # requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"}, headers={"Content-Type": "application/json"})
             vehicle = self._vehicles[vehicle_id]
             current_location = vehicle.get_location()
@@ -128,6 +127,7 @@ class CarlaManager:
                 control.throttle = 100  # Adjust throttle as needed
                 control.steer = 0.0  # Adjust steering based on direction if needed
                 vehicle.apply_control(control)
+                self.set_birds_eye_view(vehicle_id)
 
                 # Tick the world to advance the simulation
                 self._world.tick()
