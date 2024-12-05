@@ -44,6 +44,7 @@ class CarlaManager:
             exit(1)
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
+        self.set_birds_eye_view()
 
     def _tick_world(self):
         """
@@ -59,6 +60,21 @@ class CarlaManager:
         """
         self._stop_tick.set()
         self._tick_thread.join()
+
+    def set_birds_eye_view(self):
+        """
+        Set the spectator camera to a bird's-eye (top-down) view of the map.
+        """
+        spectator = self._world.get_spectator()
+        
+        # Set the camera position above the map and adjust the rotation to look straight down
+        transform = carla.Transform(
+            carla.Location(x=0, y=0, z=100),  # Height above the map (adjust as necessary)
+            carla.Rotation(pitch=-90, yaw=0, roll=0)  # Look straight down (pitch=-90 degrees)
+        )
+
+        spectator.set_transform(transform)
+        print("Spectator camera set to bird's-eye view.")
 
     def create_vehicle(self, vehicle_id):
         if vehicle_id in self._vehicles:
