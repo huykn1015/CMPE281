@@ -44,7 +44,6 @@ class CarlaManager:
             exit(1)
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
-        self.set_birds_eye_view()
 
     def _tick_world(self):
         """
