@@ -73,16 +73,7 @@ def get_vehicle_telemetry(vehicle_id):
         data = carla_manager.get_vehicle_telemetry(vehicle_id)
         if data is None:
             return jsonify({"error": "Vehicle not found"}), 404
-        
-        loc_x, loc_y, loc_z, speed, timestamp = data
-        response_data = {
-            "vehicle_id": vehicle_id,
-            "location": {"x": loc_x, "y": loc_y, "z": loc_z},
-            "speed": speed,
-            "timestamp": timestamp
-        }
-
-        return jsonify({"data": response_data}), 200
+        return jsonify({"vehicle_id": vehicle_id, "data": data}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
