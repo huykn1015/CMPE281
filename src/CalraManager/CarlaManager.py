@@ -100,41 +100,7 @@ class CarlaManager:
             self._vehicle_statuses[vehicle_id] = 'In Transit'
             # requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"}, headers={"Content-Type": "application/json"})
             vehicle = self._vehicles[vehicle_id]
-            current_location = vehicle.get_location()
-            target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
-            direction = target_location - current_location
-            direction_length = vector_length(direction)
-            direction = carla.Vector3D(
-                direction.x / direction_length,
-                direction.y / direction_length,
-                direction.z / direction_length
-            )
-            while direction_length > 1.0:  # Stop when close to the target
-                # Update the vehicle's current location
-                current_location = vehicle.get_location()
-                direction = target_location - current_location
-                direction_length = vector_length(direction)
-
-                # Normalize the direction vector again
-                direction = carla.Vector3D(
-                    direction.x / direction_length,
-                    direction.y / direction_length,
-                    direction.z / direction_length
-                )
-
-                # Control the vehicle
-                control = carla.VehicleControl()
-                control.throttle = 100  # Adjust throttle as needed
-                control.steer = 0.0  # Adjust steering based on direction if needed
-                vehicle.apply_control(control)
-                self.set_birds_eye_view(vehicle_id)
-
-                # Tick the world to advance the simulation
-                self._world.tick()
-                time.sleep(0.005)
-            control = carla.VehicleControl(throttle=0.0, brake=1.0)
-            vehicle.apply_control(control)
-            self._vehicle_statuses[vehicle_id] = 'Delivered'
+            vehicle.set_autopilot(True)
         move_thread = threading.Thread(target=move, daemon=True)
         move_thread.start()
         
