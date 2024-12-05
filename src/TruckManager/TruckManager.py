@@ -52,23 +52,40 @@ def get_trucks():
 @app.route('/api/trucks', methods=['POST'])
 def add_truck_to_db():
     """Add a new truck to the database."""
-    data = request.json
-    truck_id = data['truck_id']
-    owner_id = data.get('owner_id', None)
-    status = data.get('status', 'Idle')
-    maintenance_status = data.get('maintenance_status', 'OK')
-    system_health = data.get('system_health', 'Normal')
+    try:
+        data = request.json
+        owner_id = data.get('owner_id')  # Extract owner_id from the frontend or token
+        
+        if not owner_id:
+            return jsonify({"error": "owner_id is required"}), 400
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO "autonomous-truck".autonomous_truck (id, owner_id, status, maintenance_status, system_health)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (truck_id, owner_id, status, maintenance_status, system_health))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({"message": "Truck added successfully"}), 201
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Find the next available truck_id
+        cursor.execute('SELECT MAX(id) FROM "autonomous-truck".autonomous_truck')
+        max_id = cursor.fetchone()[0]
+        next_truck_id = (int(max_id) + 1) if max_id else 1  # Increment max_id or start at 1
+
+        # Default values for the new truck
+        status = data.get('status', 'Idle')
+        maintenance_status = data.get('maintenance_status', 'OK')
+        system_health = data.get('system_health', 'Normal')
+
+        # Insert the new truck into the database
+        cursor.execute("""
+            INSERT INTO "autonomous-truck".autonomous_truck (id, owner_id, status, maintenance_status, system_health)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (next_truck_id, owner_id, status, maintenance_status, system_health))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return jsonify({"message": "Truck added successfully", "truck_id": next_truck_id}), 201
+
+    except Exception as e:
+        print(f"Error adding truck: {str(e)}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/api/trucks/<int:truck_id>', methods=['DELETE'])
 def delete_truck_from_db(truck_id):
