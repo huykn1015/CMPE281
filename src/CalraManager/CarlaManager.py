@@ -74,7 +74,7 @@ class CarlaManager:
             carla.Location(
                 x=vehicle_transform.location.x,
                 y=vehicle_transform.location.y,
-                z=10  # Adjust height as necessary
+                z=100  # Adjust height as necessary
             ),
             carla.Rotation(pitch=-90, yaw=vehicle_transform.rotation.yaw, roll=0)
         )
@@ -125,7 +125,7 @@ class CarlaManager:
 
                 # Control the vehicle
                 control = carla.VehicleControl()
-                control.throttle = 50  # Adjust throttle as needed
+                control.throttle = 100  # Adjust throttle as needed
                 control.steer = 0.0  # Adjust steering based on direction if needed
                 vehicle.apply_control(control)
 
