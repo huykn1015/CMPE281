@@ -27,6 +27,35 @@ def get_db_connection():
     )
 
 
+@app.route('/api/user', methods=['GET'])
+def get_current_user():
+    data = request.json
+    username = data.get('username', None)
+
+    if username is None:
+        return jsonify({"error": "'username' field is missing and is required."})
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM \"autonomous-truck\".users WHERE username = %s", (username,))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    if len(rows) == 0:
+        return jsonify({"error": f"Could not find user ({username})."})
+    elif len(rows) > 1:
+        return jsonify({"error": f"FATAL: {username} matches multiple results."})
+
+    user = {
+        "id": rows[0][0],
+        "name": rows[0][1],
+        "username": username
+    }
+    
+    return jsonify(user), 200
+
+
 @app.route('/api/trucks', methods=['GET'])
 def get_trucks():
     """Fetch all trucks from the database."""
