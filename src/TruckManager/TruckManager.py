@@ -53,18 +53,26 @@ def get_trucks():
 def add_truck_to_db():
     """Add a new truck to the database."""
     data = request.json
-    truck_id = data['truck_id']
     owner_id = data.get('owner_id', None)
+
+    if owner_id is None:
+        return jsonify({"error": "Owner ID not found but is a required field."})
+    
     status = data.get('status', 'Idle')
     maintenance_status = data.get('maintenance_status', 'OK')
     system_health = data.get('system_health', 'Normal')
 
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    cursor.execute('SELECT MAX(id) FROM "autonomous-truck".autonomous_truck')
+    max_id = cursor.fetchone()[0]
+    next_truck_id = (int(max_id) + 1) if max_id else 1  # Increment max_id or start at 1
+
     cursor.execute("""
         INSERT INTO "autonomous-truck".autonomous_truck (id, owner_id, status, maintenance_status, system_health)
         VALUES (%s, %s, %s, %s, %s)
-    """, (truck_id, owner_id, status, maintenance_status, system_health))
+    """, (next_truck_id, owner_id, status, maintenance_status, system_health))
     conn.commit()
     cursor.close()
     conn.close()
