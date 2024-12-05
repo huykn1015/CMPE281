@@ -92,8 +92,6 @@ class CarlaManager:
         return vehicle
 
     def set_path(self, vehicle_id, path):
-        def vector_length(vector):
-            return math.sqrt(vector.x**2 + vector.y**2 + vector.z**2)
         def move():
             if vehicle_id not in self._vehicles:
                 raise('Vehicle not created')
@@ -101,6 +99,7 @@ class CarlaManager:
             # requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"}, headers={"Content-Type": "application/json"})
             vehicle = self._vehicles[vehicle_id]
             vehicle.set_autopilot(True)
+            self.set_birds_eye_view(vehicle_id)
         move_thread = threading.Thread(target=move, daemon=True)
         move_thread.start()
         
