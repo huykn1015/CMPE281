@@ -78,7 +78,7 @@ class CarlaManager:
             self._vehicle_statuses[vehicle_id] = 'In Transit'
 
             res = requests.put(f'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/service-request/{vehicle_id}/status',data={"status": "COMPLETE"})
-            print(res.status_code, res.json())
+            raise res.status_code
             vehicle = self._vehicles[vehicle_id]
             current_location = vehicle.get_location()
             target_location = carla.Location(x=float(path[0]), y=float(path[1]), z=float(path[2]))
