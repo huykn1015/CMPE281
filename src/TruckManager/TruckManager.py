@@ -29,7 +29,8 @@ def get_db_connection():
 
 @app.route('/api/user', methods=['GET'])
 def get_current_user():
-    username = request.args.get('username')  # Use query parameters
+    data = request.json
+    username = data.get('username')
     if not username:
         return jsonify({"error": "Missing 'username' parameter"}), 400
     
