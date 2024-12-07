@@ -104,7 +104,7 @@ def add_truck_to_db():
     conn.commit()
     cursor.close()
     conn.close()
-    return jsonify({"message": "Truck added successfully"}), 201
+    return jsonify({"message": f"Truck {next_truck_id} added successfully", "vehicle_id": next_truck_id}), 201
 
 @app.route('/api/trucks/<int:truck_id>', methods=['DELETE'])
 def delete_truck_from_db(truck_id):
