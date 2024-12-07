@@ -2,8 +2,8 @@ import carla
 import sys
 
 # Add CARLA paths to Python path
-sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla')
-sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla/agents')
+sys.path.append('/home/015041195@SJSUAD/PythonAPI/carla')
+sys.path.append('/home/015041195@SJSUAD/PythonAPI/carla/agents')
 
 from agents.navigation.behavior_agent import BehaviorAgent
 
