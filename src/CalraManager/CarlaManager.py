@@ -2,8 +2,8 @@ import carla
 import sys
 
 # Add CARLA paths to Python path
-sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla')
-sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla/agents')
+sys.path.append('/home/016218293@SJSUAD/PythonAPI/carla')
+sys.path.append('/home/016218293@SJSUAD/PythonAPI/carla/agents')
 
 from agents.navigation.basic_agent import BasicAgent
 
@@ -42,6 +42,9 @@ class CarlaManager:
             exit(1)
         self._vehicles = {}
         self._traffic_manager = self._client.get_trafficmanager()
+        self._traffic_manager.set_synchronous_mode(True)
+        self._traffic_manager.set_global_distance_to_leading_vehicle(2.5)
+        self._traffic_manager.set_respawn_dormant_vehicles(True)
 
     def _tick_world(self):
         """
