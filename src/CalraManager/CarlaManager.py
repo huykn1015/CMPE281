@@ -23,7 +23,18 @@ class CarlaManager:
 
         with open('./map.xodr', 'r') as f:
             xodr_data = f.read()
-            self._world = self._client.generate_opendrive_world(xodr_data)
+            vertex_distance = 2.0  # in meters
+            max_road_length = 500.0 # in meters
+            wall_height = 0.0      # in meters
+            extra_width = 0.6      # in meters
+            self._world = self._client.generate_opendrive_world(
+                xodr_data, carla.OpendriveGenerationParameters(
+                    vertex_distance=vertex_distance,
+                    max_road_length=max_road_length,
+                    wall_height=wall_height,
+                    additional_width=extra_width,
+                    smooth_junctions=True,
+                    enable_mesh_visibility=True))
         settings = self._world.get_settings()
         settings.synchronous_mode = True
         settings.fixed_delta_seconds = 0.05  # 20 ticks per second
