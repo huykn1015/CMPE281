@@ -5,7 +5,7 @@ import sys
 sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla')
 sys.path.append('/home/016218293@SJSUAD/.local/lib/python3.8/site-packages/carla/agents')
 
-from agents.navigation.behavior_agent import BehaviorAgent
+from agents.navigation.basic_agent import BasicAgent
 
 import random
 import time
@@ -72,11 +72,11 @@ class CarlaManager:
         # Set the spectator camera to follow the vehicle from a bird's-eye perspective
         transform = carla.Transform(
             carla.Location(
-                x=vehicle_transform.location.x,
-                y=vehicle_transform.location.y,
-                z=10  # Adjust height as necessary
+                x=vehicle_transform.location.x - 5 * vehicle_transform.get_forward_vector().x,
+                y=vehicle_transform.location.y - 5 * vehicle_transform.get_forward_vector().y,
+                z=vehicle_transform.location.z + 2
             ),
-            carla.Rotation(pitch=-90, yaw=vehicle_transform.rotation.yaw, roll=0)
+            carla.Rotation(pitch=-10, yaw=vehicle_transform.rotation.yaw, roll=0)
         )
 
         spectator.set_transform(transform)
@@ -87,7 +87,7 @@ class CarlaManager:
             return self._vehicles[vehicle_id][0]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
-        agent = BehaviorAgent(vehicle)
+        agent = BasicAgent(vehicle)
         self._vehicles[vehicle_id] = (vehicle, agent)
         self._vehicle_statuses[vehicle_id] = 'Spawned'
         return vehicle
