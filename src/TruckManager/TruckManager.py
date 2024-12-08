@@ -27,7 +27,7 @@ def get_db_connection():
     )
 
 
-@app.route('/api/user', methods=['GET'])
+@app.route('/api/user', methods=['POST'])
 def get_current_user():
     data = request.json
     username = data.get('username')
