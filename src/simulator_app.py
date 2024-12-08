@@ -33,7 +33,7 @@ def set_path():
         return jsonify({"error": "vehicle_id and path are required"}), 400
 
     try:
-        carla_manager.set_path(vehicle_id, path)
+        carla_manager.set_path2(vehicle_id, path)
         return jsonify({"vehicle_id": vehicle_id, "message": "Path set successfully"}), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
