@@ -61,12 +61,11 @@ class CarlaManager:
         self._stop_tick.set()
         self._tick_thread.join()
 
-    def set_birds_eye_view(self, vehicle_id):
+    def set_birds_eye_view(self, vehicle):
         """
         Set the spectator camera to a bird's-eye (top-down) view of the map.
         """
         spectator = self._world.get_spectator()
-        vehicle, _ = self._vehicles[vehicle_id]
         
         vehicle_transform = vehicle.get_transform()
 
@@ -131,6 +130,7 @@ class CarlaManager:
                 while not agent.done():
                     control = agent.run_step()
                     vehicle.apply_control(control)
+                    self.set_birds_eye_view(vehicle)
 
                 print(f"Reached destination: {destination}")
 
