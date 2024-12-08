@@ -66,7 +66,7 @@ class CarlaManager:
         Set the spectator camera to a bird's-eye (top-down) view of the map.
         """
         spectator = self._world.get_spectator()
-        vehicle = self._vehicles[vehicle_id]
+        vehicle, _ = self._vehicles[vehicle_id]
         
         vehicle_transform = vehicle.get_transform()
 
@@ -85,10 +85,11 @@ class CarlaManager:
 
     def create_vehicle(self, vehicle_id):
         if vehicle_id in self._vehicles:
-            return self._vehicles[vehicle_id]
+            return self._vehicles[vehicle_id][0]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
-        self._vehicles[vehicle_id] = vehicle
+        agent = BehaviorAgent(vehicle)
+        self._vehicles[vehicle_id] = (vehicle, agent)
         self._vehicle_statuses[vehicle_id] = 'Spawned'
         return vehicle
 
@@ -215,7 +216,7 @@ class CarlaManager:
 
         if int(vehicle_id) not in self._vehicles:
             return None
-        vehicle = self._vehicles[vehicle_id]
+        vehicle, _ = self._vehicles[vehicle_id]
         loc = vehicle.get_location()
         return loc.x, loc.y, loc.z
 
@@ -237,7 +238,7 @@ class CarlaManager:
 
         if vehicle_id not in self._vehicles:
             return None
-        vehicle = self._vehicles[vehicle_id]
+        vehicle, _ = self._vehicles[vehicle_id]
 
         loc = vehicle.get_location()
 
