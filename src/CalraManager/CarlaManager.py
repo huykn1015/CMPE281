@@ -260,7 +260,7 @@ class CarlaManager:
         return res
 
     def destroy_truck(self, vehicle_id):
-        vehicle = self._vehicles.pop(vehicle_id)
+        vehicle, agent = self._vehicles.pop(vehicle_id)
         vehicle.destroy()
 
     def destroy_all_vehicles(self):
