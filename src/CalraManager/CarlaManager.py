@@ -143,10 +143,6 @@ class CarlaManager:
         agent_thread = threading.Thread(target=agent_navigation)
         agent_thread.start()
 
-        # Restore default settings after simulation
-        settings.synchronous_mode = False
-        self._world.apply_settings(settings)
-
     def set_path2(self, vehicle_id, path):
         vehicle, agent = self._vehicles[vehicle_id]
         locations = self.create_locations(path)
