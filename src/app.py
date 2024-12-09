@@ -45,6 +45,7 @@ def get_path(schedule_id):
     path_manager.save_path(schedule_id, path)
     if len(path)> 0:
         print(type(path[0]))
+    path = [[float(x), float(y), float(z)] for x, y,z in path]
     return jsonify({"schedule_id": schedule_id, "path": path}, 200)
 
 
