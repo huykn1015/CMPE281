@@ -112,6 +112,7 @@ class PathManager:
             location_id = self.get_location_id(stop)
             if location_id:
                 coord = self.get_coordinates(location_id)
+                print(coords)
                 if coord:
                     coords.append((stop, coord))
         print(coords)
