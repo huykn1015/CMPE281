@@ -41,6 +41,7 @@ def get_path(schedule_id):
         raise BadRequest(f"Schedule {{{schedule_id}}} does not exist")
 
     path = path_manager.find_efficient_path(stops)
+    print(path)
     path_manager.save_path(schedule_id, path)
     if len(path)> 0:
         print(type(path[0]))
