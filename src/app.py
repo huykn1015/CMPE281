@@ -69,7 +69,7 @@ def get_schedules(schedule_id=None):
         # If no schedule_id is provided, return all schedules
         return jsonify(list(schedule_manager.get_all_schedules()))
 
-@app.route('/api/schedule-manager/service_ids/<schedule_id>', methods=['POST'])
+@app.route('/api/schedule-manager-service-ids/<schedule_id>', methods=['POST'])
 def get_schedules(schedule_id=None):
 
     if VERIFIER_ACTIVE:
