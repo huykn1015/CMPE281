@@ -5,7 +5,7 @@ import sys
 sys.path.append('/home/016218293@SJSUAD/PythonAPI/carla')
 sys.path.append('/home/016218293@SJSUAD/PythonAPI/carla/agents')
 
-from agents.navigation.basic_agent import BasicAgent
+from agents.navigation.behavior_agent import BehaviorAgent
 
 import random
 import time
@@ -87,7 +87,7 @@ class CarlaManager:
             return self._vehicles[vehicle_id][0]
 
         vehicle = self._world.spawn_actor(self._vehicle_bp, random.choice(self._spawn_points))
-        agent = BasicAgent(vehicle)
+        agent = BehaviorAgent(vehicle, behavior='aggressive')
         self._vehicles[vehicle_id] = (vehicle, agent)
         self._vehicle_statuses[vehicle_id] = 'Spawned'
         return vehicle
