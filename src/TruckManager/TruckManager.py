@@ -3,6 +3,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import psycopg2
 import os
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +27,7 @@ def get_db_connection():
         sslmode='require'
     )
 
+token = '4923f238-9852-4f14-aaf9-66aa6a9282aa'
 
 @app.route('/api/user', methods=['POST'])
 def get_current_user():
@@ -166,6 +168,10 @@ def update_truck(truck_id):
         if status:
             update_fields.append("status = %s")
             query_params.append(status)
+            requests.post(
+                'http://cmpe281-2007092816.us-east-2.elb.amazonaws.com/api/alerts/create',
+                json={"token": token, "Description": f"Trucks: Truck {truck_id} status update {status}"}
+            )
         if maintenance_status:
             update_fields.append("maintenance_status = %s")
             query_params.append(maintenance_status)
