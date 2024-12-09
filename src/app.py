@@ -35,6 +35,7 @@ def get_path(schedule_id):
 
     path = path_manager.get_path(schedule_id)
     if path is not None:
+        path = [[float(x), float(y), float(z)] for x, y, z in path]
         return jsonify(path)
     stops = schedule_manager.get_schedule(schedule_id)
     if stops is None:
