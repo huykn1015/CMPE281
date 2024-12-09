@@ -124,11 +124,10 @@ class CarlaManager:
             for destination in destinations:
                 # Get the waypoint for the destination
                 destination_waypoint = self._world.get_map().get_waypoint(destination)
-                agent.set_destination(destination_waypoint.transform.location)
+                agent.set_destination(random.choice(self._spawn_points).location)
                 print(f"Navigating to: {destination}")
 
                 while not agent.done():
-                    agent.update_information()
                     control = agent.run_step()
                     vehicle.apply_control(control)
                     self.set_birds_eye_view(vehicle)
