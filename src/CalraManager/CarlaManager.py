@@ -32,7 +32,7 @@ class CarlaManager:
         blueprint_library = self._world.get_blueprint_library()
         self._vehicle_statuses = {}
         # Choose a random vehicle blueprint
-        self._vehicle_bp = random.choice(blueprint_library.filter('vehicle.*'))
+        self._vehicle_bp = random.choice(blueprint_library.filter('vehicle.tesla.cybertruck'))
 
         # Get a random valid spawn point
         self._spawn_points = self._world.get_map().get_spawn_points()
