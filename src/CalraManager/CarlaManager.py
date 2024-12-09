@@ -86,7 +86,7 @@ class CarlaManager:
         if vehicle_id in self._vehicles:
             return self._vehicles[vehicle_id][0]
 
-        vehicle = self._world.spawn_actor(self._vehicle_bp, self._rand_sp)
+        vehicle = self._world.spawn_actor(self._vehicle_bp, random.choice(self._spawn_points))
         agent = BasicAgent(vehicle)
         self._vehicles[vehicle_id] = (vehicle, agent)
         self._vehicle_statuses[vehicle_id] = 'Spawned'
