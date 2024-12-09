@@ -143,3 +143,50 @@ def get_truck_by_id(truck_id):
         "system_health": row[4]
     }
     return jsonify(truck), 200
+
+@app.route('/api/truck/<int:truck_id>', methods=['PUT'])
+def update_truck(truck_id):
+    try:
+        # Parse the JSON body
+        data = request.json
+        status = data.get('status')
+        maintenance_status = data.get('maintenance_status')
+        system_health = data.get('system_health')
+
+        if not (status or maintenance_status or system_health):
+            return jsonify({"error": "No fields to update provided"}), 400
+
+        # Connect to the database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Build the SQL query dynamically based on provided fields
+        update_fields = []
+        query_params = []
+        if status:
+            update_fields.append("status = %s")
+            query_params.append(status)
+        if maintenance_status:
+            update_fields.append("maintenance_status = %s")
+            query_params.append(maintenance_status)
+        if system_health:
+            update_fields.append("system_health = %s")
+            query_params.append(system_health)
+
+        query_params.append(truck_id)
+        update_query = f"UPDATE autonomous_truck SET {', '.join(update_fields)} WHERE id = %s"
+
+        # Execute the query
+        cursor.execute(update_query, query_params)
+        conn.commit()
+
+        # Close connection
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": "Truck details updated successfully"}), 200
+
+    except psycopg2.Error as e:
+        return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
