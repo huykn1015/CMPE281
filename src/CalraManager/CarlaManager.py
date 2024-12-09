@@ -181,7 +181,7 @@ class CarlaManager:
                 agent.set_destination(destination_waypoint.transform.location)
                 print(f"Navigating to: {destination}")
 
-                while not agent.done():
+                while not agent.done(): 
                     control = agent.run_step()
                     vehicle.apply_control(control)
 

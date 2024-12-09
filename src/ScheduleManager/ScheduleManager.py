@@ -17,7 +17,7 @@ class ScheduleManager:
         self.dynamodb = boto3.resource('dynamodb', region_name=region_name)
         self.table = self.dynamodb.Table(table_name)
 
-    def create_schedule(self, key: str, data: list):
+    def create_schedule(self, key: str, data: list, ser_ids: list=None):
         """
         Creates a new schedule entry for a truck with a list of stops.
 
@@ -33,10 +33,12 @@ class ScheduleManager:
             return response  # Optionally return the current schedule or handle as needed
         print(data)
         # Create the schedule entry
+        ser_ids = [] if ser_ids is None else ser_ids
         response = self.table.put_item(
             Item={
                 self.key_name: key,
-                self.field_name: data
+                self.field_name: data,
+                'service_id': ser_ids,
             }
         )
 

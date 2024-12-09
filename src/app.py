@@ -95,8 +95,10 @@ def create_schedule():
 
     # Create a unique schedule ID
     schedule_id = str(uuid.uuid4())  # or "123" as per your example
-
-    schedule_manager.create_schedule(schedule_id, data['stops'])
+    s_ids = None
+    if 'service_ids' in data:
+        s_ids = data['service_ids']
+    schedule_manager.create_schedule(schedule_id, data['stops'], s_ids)
 
     # Construct response
     response = {
