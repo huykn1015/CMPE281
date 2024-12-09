@@ -42,7 +42,8 @@ def get_path(schedule_id):
 
     path = path_manager.find_efficient_path(stops)
     path_manager.save_path(schedule_id, path)
-
+    if len(path > 0):
+        print(type(path[0]))
     return jsonify({"schedule_id": schedule_id, "path": path}, 200)
 
 
