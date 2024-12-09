@@ -69,6 +69,25 @@ def get_schedules(schedule_id=None):
         # If no schedule_id is provided, return all schedules
         return jsonify(list(schedule_manager.get_all_schedules()))
 
+@app.route('/api/schedule-manager/service_ids/<schedule_id>', methods=['POST'])
+def get_schedules(schedule_id=None):
+
+    if VERIFIER_ACTIVE:
+        data = request.get_json()
+        session_token = data.get('token')
+        permissions = verifier.validate_session_token(session_token)
+        if not permissions:
+            raise BadRequest("Invalid session token")
+        if 'R' not in permissions:
+            raise BadRequest("No Write Access")
+
+    # If schedule_id is provided, return the corresponding schedule
+    schedule = schedule_manager.get_schedule_(schedule_id)
+    if not schedule:
+        raise NotFound(f"Schedule ID {schedule_id} not found.")
+    return jsonify(schedule)
+
+
 
 @app.route('/api/schedule-manager/create', methods=['POST'])
 def create_schedule():

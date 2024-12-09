@@ -59,6 +59,20 @@ class ScheduleManager:
         else:
             return None  # Return None if the truck_id does not exist
 
+    def get_schedule_(self, key: str):
+        """
+        Retrieves the schedule for a given truck.
+
+        :param key: The ID
+        :return: The schedule (list of stops) for the truck.
+        """
+        response = self.table.get_item(Key={self.key_name: key})
+
+        if 'Item' in response:
+            return response['Item']['service_ids']
+        else:
+            return None  # Return None if the truck_id does not exist
+
     def update_schedule(self, key: str, new_stops: list):
         """
         Updates the schedule (stops) for a given truck.
