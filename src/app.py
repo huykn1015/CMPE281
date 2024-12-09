@@ -70,8 +70,7 @@ def get_schedules(schedule_id=None):
         return jsonify(list(schedule_manager.get_all_schedules()))
 
 @app.route('/api/schedule-manager-service-ids/<schedule_id>', methods=['POST'])
-def get_schedules(schedule_id=None):
-
+def get_schedules_(schedule_id=None):
     if VERIFIER_ACTIVE:
         data = request.get_json()
         session_token = data.get('token')
