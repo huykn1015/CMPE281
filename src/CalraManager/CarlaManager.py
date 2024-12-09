@@ -32,7 +32,7 @@ class CarlaManager:
         blueprint_library = self._world.get_blueprint_library()
         self._vehicle_statuses = {}
         # Choose a random vehicle blueprint
-        self._vehicle_bp = random.choice(blueprint_library.filter('vehicle.*'))
+        self._vehicle_bp = random.choice(blueprint_library.filter('vehicle.tesla.cybertruck'))
 
         # Get a random valid spawn point
         self._spawn_points = self._world.get_map().get_spawn_points()
@@ -45,6 +45,7 @@ class CarlaManager:
         self._traffic_manager.set_synchronous_mode(True)
         self._traffic_manager.set_global_distance_to_leading_vehicle(2.5)
         self._traffic_manager.set_respawn_dormant_vehicles(True)
+        self._world.tick()
 
     def _tick_world(self):
         """
@@ -141,17 +142,6 @@ class CarlaManager:
         # Start navigation in a separate thread
         agent_thread = threading.Thread(target=agent_navigation)
         agent_thread.start()
-
-        try:
-            # Main thread handles simulation ticks
-            while agent_thread.is_alive():
-                self._world.tick()  # Advance simulation
-        except KeyboardInterrupt:
-            print("Simulation interrupted.")
-        finally:
-            # Restore default settings after simulation
-            settings.synchronous_mode = False
-            self._world.apply_settings(settings)
 
     def set_path2(self, vehicle_id, path):
         vehicle, agent = self._vehicles[vehicle_id]
@@ -266,7 +256,7 @@ class CarlaManager:
         return res
 
     def destroy_truck(self, vehicle_id):
-        vehicle = self._vehicles.pop(vehicle_id)
+        vehicle, agent = self._vehicles.pop(vehicle_id)
         vehicle.destroy()
 
     def destroy_all_vehicles(self):
