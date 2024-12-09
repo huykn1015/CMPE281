@@ -128,6 +128,7 @@ class CarlaManager:
                 print(f"Navigating to: {destination}")
 
                 while not agent.done():
+                    agent.update_information()
                     control = agent.run_step()
                     vehicle.apply_control(control)
                     self.set_birds_eye_view(vehicle)
