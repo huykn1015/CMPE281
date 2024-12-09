@@ -174,7 +174,7 @@ def update_truck(truck_id):
             query_params.append(system_health)
 
         query_params.append(truck_id)
-        update_query = f"UPDATE autonomous_truck SET {', '.join(update_fields)} WHERE id = %s"
+        update_query = f"UPDATE \"autonomous-truck\".autonomous_truck SET {', '.join(update_fields)} WHERE id = %s"
 
         # Execute the query
         cursor.execute(update_query, query_params)
