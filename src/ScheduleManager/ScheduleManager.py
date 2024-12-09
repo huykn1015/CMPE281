@@ -69,7 +69,7 @@ class ScheduleManager:
         response = self.table.get_item(Key={self.key_name: key})
 
         if 'Item' in response:
-            return response['Item']['service_ids']
+            return response['Item']['service_id']
         else:
             return None  # Return None if the truck_id does not exist
 
