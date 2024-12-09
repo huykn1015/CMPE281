@@ -45,6 +45,7 @@ class CarlaManager:
         self._traffic_manager.set_synchronous_mode(True)
         self._traffic_manager.set_global_distance_to_leading_vehicle(2.5)
         self._traffic_manager.set_respawn_dormant_vehicles(True)
+        self._world.tick()
 
     def _tick_world(self):
         """
@@ -142,16 +143,9 @@ class CarlaManager:
         agent_thread = threading.Thread(target=agent_navigation)
         agent_thread.start()
 
-        try:
-            # Main thread handles simulation ticks
-            while agent_thread.is_alive():
-                self._world.tick()  # Advance simulation
-        except KeyboardInterrupt:
-            print("Simulation interrupted.")
-        finally:
-            # Restore default settings after simulation
-            settings.synchronous_mode = False
-            self._world.apply_settings(settings)
+        # Restore default settings after simulation
+        settings.synchronous_mode = False
+        self._world.apply_settings(settings)
 
     def set_path2(self, vehicle_id, path):
         vehicle, agent = self._vehicles[vehicle_id]
